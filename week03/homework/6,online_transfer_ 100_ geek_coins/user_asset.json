@@ -1,0 +1,14 @@
+{
+  "user1": {
+    "u_id": 1,
+    "total_assets": 50
+  },
+  "user2": {
+    "u_id": 2,
+    "total_assets": 190
+  },
+  "user3": {
+    "u_id": 3,
+    "total_assets": 200
+  }
+}
