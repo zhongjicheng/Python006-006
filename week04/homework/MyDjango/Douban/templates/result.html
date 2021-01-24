@@ -1,0 +1,13 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>BookList</title>
+</head>>
+<body>
+
+{% for review in queryset %}
+    <div>n_star: {{ review.n_star }} <br>
+        short: {{ review.short }}
+    </div>>
+{% endfor %}
+</body>>
