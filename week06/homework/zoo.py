@@ -24,59 +24,76 @@ from abc import ABCMeta, abstractmethod
 
 
 class Animal(metaclass=ABCMeta):
-    def __init__(self, animal_type, size, character):
-        self.animal_type = animal_type
-        self.size = size  # 体型（小，中等，大型）
+    feeding_habits = ('素食', '杂食', '肉食')
+    sizes = ('小型', '中等', '大型')
+    characters = ('温顺', '中性', '凶猛')
+
+    def __init__(self, feeding_habit, size, character):
+        if feeding_habit not in Animal.feeding_habits:
+            raise ValueError(f'Only {Animal.feeding_habits} can be selected')
+        if size not in Animal.sizes:
+            raise ValueError(f'Only {Animal.sizes} can be selected')
+        if character not in Animal.characters:
+            raise ValueError(f'Only {Animal.characters} can be selected')
+        self.feeding_habit = feeding_habit
+        self.size = size
         self.character = character
 
     @property
-    def is_ferocious_animals(self):
-        if self.size != "小" and self.animal_type == "食肉" and self.character == "凶猛":
+    def is_ferocious(self):
+        if self.size != Animal.sizes[0] and self.feeding_habit == Animal.feeding_habits[2] and self.character == \
+                Animal.characters[2]:
             return True
         return False
 
     @abstractmethod
-    def is_pet(self):
+    def is_pet_able(self):
         pass
 
 
 class Cat(Animal):
-    sounds = "mew"
+    sounds = "meow"
 
-    def __init__(self, cat_name, animal_type, size, character):
-        super(Cat, self).__init__(animal_type, size, character)
-        self.cat_name = cat_name
+    def __init__(self, name, feeding_habit, size, character):
+        super(Cat, self).__init__(feeding_habit, size, character)
+        self.name = name
 
     @property
-    def is_pet(self):
-        return not self.is_ferocious_animals
+    def is_pet_able(self):
+        return not self.is_ferocious
 
     @classmethod
     def get_sounds(cls):
         return cls.sounds
+
+    def __repr__(self):
+        print(f'Cat: {self.name}')
 
 
 class Dog(Animal):
     sounds = "woof"
 
-    def __init__(self, cat_name, animal_type, size, character):
-        super(Dog, self).__init__(animal_type, size, character)
-        self.cat_name = cat_name
+    def __init__(self, name, feeding_habit, size, character):
+        super(Dog, self).__init__(feeding_habit, size, character)
+        self.name = name
 
     @property
-    def is_pet(self):
-        return not self.is_ferocious_animals
+    def is_pet_able(self):
+        return not self.is_ferocious
 
     @classmethod
     def get_sounds(cls):
         return cls.sounds
 
+    def __repr__(self):
+        print(f'Dog: {self.name}')
+
 
 class Zoo(object):
-    animal_instance_dic = []
+    animals = []
 
-    def __init__(self, zoo_name):
-        self.zoo_name = zoo_name
+    def __init__(self, name):
+        self.name = name
 
     @classmethod
     def add_animal(cls, animal: Animal):
@@ -85,18 +102,17 @@ class Zoo(object):
         :param animal: Animal 实例
         :return:
         """
-        if cls.animal_instance_dic:
-            for animal in cls.animal_instance_dic:
-                if type(animal) is type(animal):
-                    return cls.animal_instance_dic
+        if cls.animals:
+            for animal_instance in cls.animals:
+                if type(animal) == type(animal_instance):
+                    break
             else:
-                cls.animal_instance_dic.append(animal)
+                cls.animals.append(animal)
         else:
-            cls.animal_instance_dic.append(animal)
+            cls.animals.append(animal)
 
-    @classmethod
-    def print_animals(cls):
-        print(cls.animal_instance_dic)
+    def __repr__(self):
+        print(f'Zoo: {self.name}')
 
 
 def hasattr(zoo: Zoo, animal: Animal):
@@ -106,9 +122,9 @@ def hasattr(zoo: Zoo, animal: Animal):
     :param animal: Animal 实例
     :return:
     """
-    if zoo.animal_instance_dic:
-        for animal_instance in zoo.animal_instance_dic:
-            if type(animal_instance) is type(animal):
+    if zoo.animals:
+        for animal_instance in zoo.animals:
+            if animal.name == animal_instance.name:
                 return True
         else:
             return False
@@ -117,14 +133,27 @@ def hasattr(zoo: Zoo, animal: Animal):
 
 
 if __name__ == "__main__":
-    dog = Dog('藏獒', '食肉', '大型', '凶猛')
-    cat = Cat('大花猫 1', '食肉', '小', '温顺')
-    print(cat.is_ferocious_animals)
-    print(cat.get_sounds())
-    print(cat.is_pet)
+    # 初始化3只动物到动物类
+    dog = Dog('藏獒', '肉食', '大型', '凶猛')
+    dog_jinmao = Dog('金毛', '肉食', '中等', '温顺')
+    cat = Cat('大花猫', '肉食', '小型', '温顺')
+
+    # 打印各动物的属性
+    print(f"{cat.name} is ferocious: {cat.is_ferocious}")
+    print(f"Sound of {cat.name} is: {cat.get_sounds()}")
+    print(f"{cat.name} is pet able: {cat.is_pet_able}")
+    print(f"{dog.name} is ferocious: {dog.is_ferocious}")
+    print(f"Sound of {dog.name} is: {dog.get_sounds()}")
+    print(f"{dog.name} is pet able: {dog.is_pet_able}")
+
+    # 添加动物到动物园
     z = Zoo('时间动物园')
     z.add_animal(cat)
+    z.add_animal(cat)
     z.add_animal(dog)
-    z.print_animals()
-    print(hasattr(z, cat))
-    print(hasattr(z, dog))
+    z.add_animal(dog)
+
+    # 检查动物园是否有已初始化的动物
+    print(f"{z.name} has {cat.name}: {hasattr(z, cat)}")
+    print(f"{z.name} has {dog.name}: {hasattr(z, dog)}")
+    print(f"{z.name} has {dog_jinmao.name}: {hasattr(z, dog_jinmao)}")
