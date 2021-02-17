@@ -1,3 +1,8 @@
+"""
+作业二：
+自定义一个 python 类，实现 map() 函数的功能。
+"""
+
 from collections.abc import Iterator, Iterable
 from record_log import RecordLog
 
