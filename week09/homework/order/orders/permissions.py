@@ -13,4 +13,4 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
             return True
 
          # 只有该微博的所有者才允许写权限。
-        return obj.author_id == request.user
+        # return obj.author_id == request.user

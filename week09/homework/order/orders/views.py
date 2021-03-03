@@ -1,7 +1,8 @@
 from django.shortcuts import render
 
 # Create your views here.
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, status, permissions, generics
+from rest_framework.decorators import action
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -15,28 +16,22 @@ from django_filters import rest_framework as rf_filters
 from django.http import HttpResponse
 
 
-class OrderViewSet(viewsets.ModelViewSet):
+class OrdersViewSet(viewsets.ModelViewSet):
     queryset = Orders.objects.all()
     serializer_class = OrdersSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly,
+                          IsOwnerOrReadOnly]
 
-    def retrieve(self, request, pk=None):
-        """ order详情 """
-        # 获取实例
-        user = self.get_object()
-        # 序列化
-        serializer = self.get_serializer(user)
-        return Response(serializer.data)
-
-    @api_view(['POST'])
-    def create(self, request, *args, **kwargs):
-        """
-        创建order
-        """
-        serializer = OrdersSerializer(data=request.data, context={'request': request})
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-
-        return Response(serializer.data)
+    @action(detail=True, methods=['GET'])
+    def cancel(self, request, *args, **kwargs):
+        order = self.get_object()
+        if order.is_cancel is False:
+            order.is_cancel = True
+            order.save()
+            return Response({'status': '订单取消成功'})
+        else:
+            return Response({'status': '订单已取消, 请不要重复提交'},
+                            status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])

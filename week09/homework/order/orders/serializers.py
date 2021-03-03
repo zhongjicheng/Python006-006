@@ -14,7 +14,7 @@ class OrdersSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Orders
-        fields = ['id', 'product_id', 'product_name', 'product_size', 'quantity', 'price', 'total_amount']
+        fields = ['id', 'product_id', 'product_name', 'product_size', 'quantity', 'price', 'total_amount', 'is_cancel']
 
     @api_view(['GET'])
     def show_data(self, request):

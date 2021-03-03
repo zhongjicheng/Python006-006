@@ -39,11 +39,13 @@ class Orders(models.Model):
     订单类:
     一个订单的信息包含：产品名，产品的规格，数量，单价，总金额
     """
-    __tablename__ = 'factory_orders'
+    __tablename__ = 'orders'
     product_id = models.IntegerField(verbose_name='产品id')
     product_name = models.CharField(max_length=30, verbose_name='产品名', default='')
     product_size = models.BigIntegerField(verbose_name='产品规格', default=1001)
     quantity = models.BigIntegerField(verbose_name='产品数量', default=0)
     price = models.BigIntegerField(verbose_name='产品单价', default=100)
     total_amount = models.BigIntegerField(verbose_name='总金额', default=0)
+    is_cancel = models.BooleanField(verbose_name='取消订单', default=False)
     order_time = models.DateTimeField(auto_now_add=True)  # 下单时间
+    create_order_time = models.DateTimeField(auto_now_add=True)  # 创建订单时间
